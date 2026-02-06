@@ -10,9 +10,9 @@ class DetailController extends GetxController {
     "assets/images/rinjani-1.png",
   ];
 
-  RxBool isFavorite = false.obs; // حالة القلب
+  RxBool isFavorite = false.obs;
 
-  RxList<String> favoriteItems = <String>[].obs; // قائمة المفضلات
+  RxList<String> favoriteItems = <String>[].obs;
 
   void changeImage(String img) {
     currentImage.value = img;

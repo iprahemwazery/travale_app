@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:travale_app/app_routes.dart';
 import 'package:travale_app/auth/login/login_view.dart';
 import 'package:travale_app/core/network/pref_helper.dart';
 import 'package:travale_app/root.dart';
@@ -22,10 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     // لو موجود توكن، المستخدم مسجل دخول سابقًا
     if (token != null && token.isNotEmpty) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const Root()),
-      );
+      Get.toNamed(AppRoutes.root);
     } else {
       Navigator.pushReplacement(
         context,

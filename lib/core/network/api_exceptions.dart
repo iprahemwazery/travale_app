@@ -1,57 +1,57 @@
 import 'package:dio/dio.dart';
-import 'package:travale_app/core/network/api_error.dart';
+import 'api_error.dart';
 
 class ApiExceptions {
   static ApiError handleError(DioException error) {
     final statusCode = error.response?.statusCode;
     final data = error.response?.data;
 
-    if (statusCode != null) {
-      if (data is Map<String, dynamic> && data['message'] != null) {
-        return ApiError(message: data['message'], statusCode: statusCode);
+    // ✅ API custom message (WordPress)
+    if (data is Map<String, dynamic>) {
+      final message = data['message']?.toString();
+      if (message != null && message.isNotEmpty) {
+        return ApiError(message: message, statusCode: statusCode);
       }
     }
 
-    if (statusCode == 302) {
-      throw ApiError(message: 'This Email Already Taken');
+    // ✅ Status code handling
+    switch (statusCode) {
+      case 400:
+        return ApiError(
+          message: 'Invalid data sent to server',
+          statusCode: statusCode,
+        );
+      case 401:
+        return ApiError(
+          message: 'Unauthorized request',
+          statusCode: statusCode,
+        );
+      case 403:
+        return ApiError(
+          message: 'Email or username already exists',
+          statusCode: statusCode,
+        );
+      case 404:
+        return ApiError(message: 'Service not found', statusCode: statusCode);
+      case 500:
+        return ApiError(
+          message: 'Server error, try again later',
+          statusCode: statusCode,
+        );
     }
 
-    print(statusCode);
-    print(data);
-
+    // ✅ Dio connection errors
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-        return ApiError(
-          message: "Connection timeout. Please check your internet connection",
-        );
-      case DioExceptionType.sendTimeout:
-        return ApiError(message: "Request timeout. Please try again");
       case DioExceptionType.receiveTimeout:
-        return ApiError(message: "Response timeout. Please try again");
+      case DioExceptionType.sendTimeout:
+        return ApiError(message: 'Connection timeout');
+
+      case DioExceptionType.connectionError:
+        return ApiError(message: 'No internet connection');
+
       default:
-        return ApiError(
-          message: "An unexpected error occurred. Please try again",
-        );
+        return ApiError(message: 'Unexpected error occurred');
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// if(statusCode == 302) {
-//   return ApiError(message: 'The Email is Already Taken');
-// }
-
-// print('Error response: ${error.response?.data}');
-// print('Status code: $statusCode');

@@ -59,7 +59,7 @@ class ApiService {
   }) async {
     try {
       final response = await _dioClient.dio.post(
-        '/create-user',
+        'https://travel.wazery.net/wp-json/traveler/create-user',
         data: {
           'username': username,
           'password': password,
@@ -80,7 +80,7 @@ class ApiService {
   /// ============================
   /// LOGIN (JWT)
   /// ============================
-  Future<dynamic> login({
+  Future<Map<String, dynamic>?> login({
     required String username,
     required String password,
   }) async {
@@ -89,12 +89,10 @@ class ApiService {
         'https://travel.wazery.net/wp-json/jwt-auth/v1/token',
         data: {'username': username, 'password': password},
       );
-
-      print('Login response: ${response.data}');
-      return response.data;
+      return response.data; // هنا Map
     } on DioException catch (e) {
       print('Login error: ${e.response?.data}');
-      return ApiExceptions.handleError(e);
+      return null; // بدل ما يرجع ApiError
     }
   }
 
